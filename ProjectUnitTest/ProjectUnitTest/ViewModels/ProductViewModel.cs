@@ -15,7 +15,7 @@ namespace ProjectUnitTest.ViewModels
     public class ProductViewModel : INotifyPropertyChanged
     {
         private readonly IDependencyService _dependencyService;
-        public IDataStore<Product> DataStore => DependencyService.Get<IDataStore<Product>>() ?? new DataStore<Product>("ProductDataBase.db3");
+        public IDataStore<Product> DataStore => _dependencyService == null? DependencyService.Get<IDataStore<Product>>() ?? new DataStore<Product>("ProductDataBase.db3") : new DataStore<Product>("ProductDataBase.db3");
         public INavigation _nav;
         public ContentPage CurrentPage { get; set; }
         public ObservableCollection<Product> Products;
@@ -38,8 +38,7 @@ namespace ProjectUnitTest.ViewModels
         public ProductViewModel(IDependencyService dependencyService)
         {
             _dependencyService = dependencyService;
-            DataStore.CreateTableAsync();
-            AddProductAsync();
+           
         }
 
 
@@ -113,10 +112,11 @@ namespace ProjectUnitTest.ViewModels
                 OnPropertyChanged();
             }
         }
+        Mesearement m = new Mesearement();
+            Models.Color c = new Models.Color();
         public  async void AddProductAsync()
         {
-            Mesearement m = new Mesearement();
-            Models.Color c = new Models.Color();
+           
             Product p = new Product
             {
                Name = Name,
@@ -146,6 +146,12 @@ namespace ProjectUnitTest.ViewModels
                     try
                     {
                         ProductList.Clear();
+                        //             var innerJoinQuery =
+                        //from product in ProductList
+                        //join prod in products on m.Id equals prod.MesearementId
+                        //select new { Color = c.Id, Product = prod.Name };
+
+                        // var u = await DataStore.GetAllAsync(p=>p.MesearementId.Equals(m.Id) && p.ColorId.Equals(c.Id));
                         var u = await DataStore.GetAllAsync();
                         foreach (var item in u)
                         {
